@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Haritha · Identity & Security PM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:#0a0d12; --bg2:#0f1318; --bg3:#141920; --border:#1e2530;
+    --accent:#3b82f6; --accent2:#06b6d4; --muted:#4b5563; --soft:#9ca3af;
+    --body:#cbd5e1; --head:#f1f5f9;
+    --mono:'JetBrains Mono',monospace; --sans:'Inter',sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background:var(--bg); color:var(--body); font-family:var(--sans); font-size:16px; line-height:1.7; overflow-x:hidden; }
+
+  nav {
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:18px 48px;
+    background:rgba(10,13,18,0.88); backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-logo { font-family:var(--mono); font-size:13px; color:var(--accent2); letter-spacing:.05em; }
+  .nav-links { display:flex; gap:32px; }
+  .nav-links a { font-size:13px; color:var(--soft); text-decoration:none; letter-spacing:.03em; transition:color .2s; }
+  .nav-links a:hover { color:var(--head); }
+
+  #hero { min-height:100vh; display:flex; align-items:center; padding:120px 48px 80px; position:relative; overflow:hidden; }
+  canvas#graph { position:absolute; inset:0; opacity:.35; pointer-events:none; }
+  .hero-content { position:relative; z-index:2; max-width:780px; }
+  .eyebrow { font-family:var(--mono); font-size:12px; color:var(--accent2); letter-spacing:.12em; text-transform:uppercase; margin-bottom:24px; }
+  h1 { font-size:clamp(2.4rem,5vw,4rem); font-weight:600; color:var(--head); line-height:1.15; letter-spacing:-.02em; margin-bottom:24px; }
+  h1 span { background:linear-gradient(90deg,var(--accent),var(--accent2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+  .hero-sub { font-size:1.1rem; color:var(--soft); max-width:560px; margin-bottom:40px; line-height:1.75; }
+  .hero-stats { display:flex; gap:40px; margin-bottom:40px; flex-wrap:wrap; }
+  .stat { display:flex; flex-direction:column; }
+  .stat-num { font-family:var(--mono); font-size:1.6rem; font-weight:500; color:var(--head); line-height:1; }
+  .stat-label { font-size:11px; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; margin-top:4px; }
+  .cta-row { display:flex; gap:16px; flex-wrap:wrap; }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:12px 24px; border-radius:6px; font-size:14px; font-weight:500; text-decoration:none; cursor:pointer; transition:all .2s; border:none; }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-primary:hover { background:#2563eb; transform:translateY(-1px); }
+  .btn-ghost { background:transparent; color:var(--soft); border:1px solid var(--border); }
+  .btn-ghost:hover { border-color:var(--accent); color:var(--head); }
+
+  section { padding:96px 48px; }
+  .section-label { font-family:var(--mono); font-size:11px; color:var(--accent2); letter-spacing:.14em; text-transform:uppercase; margin-bottom:12px; }
+  h2 { font-size:clamp(1.6rem,3vw,2.4rem); font-weight:600; color:var(--head); letter-spacing:-.02em; margin-bottom:16px; line-height:1.25; }
+  .section-intro { color:var(--soft); max-width:580px; margin-bottom:56px; font-size:1rem; }
+  .divider { height:1px; background:var(--border); }
+
+  /* EXPERTISE */
+  #expertise { background:var(--bg2); }
+  .expertise-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:24px; }
+  .exp-card { background:var(--bg3); border:1px solid var(--border); border-radius:10px; padding:28px; transition:border-color .2s,transform .2s; }
+  .exp-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+  .exp-icon { font-family:var(--mono); font-size:11px; color:var(--accent2); letter-spacing:.1em; margin-bottom:16px; display:block; }
+  .exp-card h3 { font-size:15px; font-weight:600; color:var(--head); margin-bottom:10px; }
+  .exp-card p { font-size:13.5px; color:var(--soft); line-height:1.65; }
+  .tag-row { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .tag { font-family:var(--mono); font-size:11px; padding:3px 10px; border-radius:4px; background:rgba(59,130,246,.1); color:var(--accent); border:1px solid rgba(59,130,246,.2); }
+  .tag-cyan { background:rgba(6,182,212,.1); color:var(--accent2); border-color:rgba(6,182,212,.2); }
+
+  /* CASE STUDIES */
+  #cases { background:var(--bg); }
+  .case-list { display:flex; flex-direction:column; gap:24px; }
+  .case-card { background:var(--bg2); border:1px solid var(--border); border-radius:10px; padding:36px 40px; display:grid; grid-template-columns:1fr auto; gap:24px; align-items:start; transition:border-color .2s; }
+  .case-card:hover { border-color:var(--accent); }
+  .case-tag { font-family:var(--mono); font-size:11px; color:var(--accent2); letter-spacing:.1em; text-transform:uppercase; margin-bottom:12px; display:block; }
+  .case-card h3 { font-size:18px; font-weight:600; color:var(--head); margin-bottom:10px; }
+  .case-card p { font-size:14px; color:var(--soft); line-height:1.7; max-width:600px; }
+  .case-meta { display:flex; flex-direction:column; align-items:flex-end; gap:6px; white-space:nowrap; }
+  .case-impact { font-family:var(--mono); font-size:22px; font-weight:500; color:var(--head); line-height:1; }
+  .case-impact-label { font-size:11px; color:var(--muted); text-align:right; letter-spacing:.06em; text-transform:uppercase; }
+
+  /* WIP BADGE */
+  .wip-badge { display:inline-flex; align-items:center; gap:6px; font-family:var(--mono); font-size:11px; padding:4px 10px; border-radius:4px; background:rgba(251,191,36,.08); color:#fbbf24; border:1px solid rgba(251,191,36,.2); margin-top:12px; }
+  .wip-dot { width:6px; height:6px; border-radius:50%; background:#fbbf24; animation:pulse-dot 1.8s ease-in-out infinite; }
+  @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+  /* CAREER */
+  #career { background:var(--bg2); }
+  .timeline { position:relative; padding-left:32px; }
+  .timeline::before { content:''; position:absolute; left:0; top:8px; bottom:0; width:1px; background:var(--border); }
+  .tl-item { position:relative; margin-bottom:48px; }
+  .tl-item::before { content:''; position:absolute; left:-36px; top:8px; width:9px; height:9px; border-radius:50%; background:var(--accent); border:2px solid var(--bg2); box-shadow:0 0 0 1px var(--accent); }
+  .tl-date { font-family:var(--mono); font-size:11px; color:var(--muted); letter-spacing:.08em; margin-bottom:6px; }
+  .tl-role { font-size:16px; font-weight:600; color:var(--head); margin-bottom:2px; }
+  .tl-company { font-size:13px; color:var(--accent2); margin-bottom:10px; font-family:var(--mono); }
+  .tl-desc { font-size:14px; color:var(--soft); line-height:1.7; max-width:620px; }
+
+  /* CONTACT */
+  #contact { background:var(--bg); text-align:center; }
+  .contact-wrap { max-width:520px; margin:0 auto; }
+  .contact-wrap p { color:var(--soft); margin-bottom:40px; }
+  .contact-links { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; }
+
+  footer { padding:24px 48px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--muted); font-family:var(--mono); }
+
+  @media(max-width:768px){
+    nav{padding:16px 24px;} .nav-links{gap:18px;}
+    #hero{padding:100px 24px 60px;} section{padding:64px 24px;}
+    .case-card{grid-template-columns:1fr;} .case-meta{align-items:flex-start; flex-direction:row; flex-wrap:wrap; gap:16px;}
+    footer{flex-direction:column; gap:8px; text-align:center;}
+  }
+  @media(prefers-reduced-motion:reduce){ *{animation:none!important; transition:none!important;} }
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-logo">haritha.pm</span>
+  <div class="nav-links">
+    <a href="#expertise">Expertise</a>
+    <a href="#cases">Case Studies</a>
+    <a href="#career">Career</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<section id="hero">
+  <canvas id="graph"></canvas>
+  <div class="hero-content">
+    <p class="eyebrow">// identity &amp; security product management</p>
+    <h1>I build products at the <span>intersection of identity, security, and AI.</span></h1>
+    <p class="hero-sub">
+      Senior PM with 19 years in enterprise IT — 9+ years deep in Identity &amp; Access Management,
+      6 years in product. I turn complex IAM problems into roadmaps teams can ship
+      and organizations can trust.
+    </p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">19</span><span class="stat-label">Years Enterprise IT</span></div>
+      <div class="stat"><span class="stat-num">9+</span><span class="stat-label">Years IAM Domain</span></div>
+      <div class="stat"><span class="stat-num">6</span><span class="stat-label">Years in Product</span></div>
+      <div class="stat"><span class="stat-num">NHI</span><span class="stat-label">Current Focus</span></div>
+    </div>
+    <div class="cta-row">
+      <a href="#cases" class="btn btn-primary">See Case Studies</a>
+      <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- EXPERTISE -->
+<section id="expertise">
+  <p class="section-label">// domain expertise</p>
+  <h2>Where I operate</h2>
+  <p class="section-intro">Not a generalist PM who picked up IAM. I came from the domain and learned to build products on top of it.</p>
+  <div class="expertise-grid">
+
+    <div class="exp-card">
+      <span class="exp-icon">01 · NHI / NUA GOVERNANCE</span>
+      <h3>Non-Human Identity Governance</h3>
+      <p>Discovery, scoping, and lifecycle automation for service accounts, machine identities, and AI agents. Currently owning this as a platform initiative at Target — actively in flight.</p>
+      <div class="tag-row"><span class="tag">NHI</span><span class="tag">SailPoint</span><span class="tag">Lifecycle</span><span class="tag wip-badge" style="background:rgba(251,191,36,.08);color:#fbbf24;border-color:rgba(251,191,36,.2);">In Progress</span></div>
+    </div>
+
+    <div class="exp-card">
+      <span class="exp-icon">02 · ENTERPRISE TRANSFORMATION</span>
+      <h3>Legacy-to-Inhouse IAM Migration</h3>
+      <p>Led a 5-year enterprise IAM transformation — decommissioning legacy vendor platforms and migrating to in-house developed identity solutions across a large enterprise. End-to-end ownership from architecture alignment to go-live.</p>
+      <div class="tag-row"><span class="tag">Transformation</span><span class="tag">Migration</span><span class="tag">5 Years</span></div>
+    </div>
+
+    <div class="exp-card">
+      <span class="exp-icon">03 · AI AGENT IDENTITY</span>
+      <h3>Agentic AI Security</h3>
+      <p>Defining identity governance models for AI agents — JIT access, ephemeral credentials, least-privilege enforcement before agents scale out of control in enterprise environments.</p>
+      <div class="tag-row"><span class="tag">AgentGate</span><span class="tag">JIT Access</span><span class="tag">IPSIE</span></div>
+    </div>
+
+    <div class="exp-card">
+      <span class="exp-icon">04 · IGA &amp; ACCESS GOVERNANCE</span>
+      <h3>Identity Governance &amp; Admin</h3>
+      <p>Access certification, role mining, entitlement risk scoring, SoD enforcement, and provisioning automation at enterprise scale — including measurable reduction in manual access ops effort.</p>
+      <div class="tag-row"><span class="tag">IGA</span><span class="tag">Entitlement Risk</span><span class="tag">RBAC</span></div>
+    </div>
+
+    <div class="exp-card">
+      <span class="exp-icon">05 · PAM &amp; ZERO TRUST</span>
+      <h3>Privileged Access &amp; Zero Trust</h3>
+      <p>Privileged access management, Centrify Unix/Group Maintenance, RSA token lifecycle management, and continuous verification architectures for hybrid enterprise environments.</p>
+      <div class="tag-row"><span class="tag">PAM</span><span class="tag">Centrify</span><span class="tag">RSA</span><span class="tag">Zero Trust</span></div>
+    </div>
+
+    <div class="exp-card">
+      <span class="exp-icon">06 · AI-NATIVE PM</span>
+      <h3>AI-Augmented Product Work</h3>
+      <p>Built working prototypes: entitlement risk API, multi-agent debate system, IAM on-call prevention agent. Treat AI as a product capability, not a feature bolt-on.</p>
+      <div class="tag-row"><span class="tag">LLM</span><span class="tag">Agentic</span><span class="tag">Prototype</span></div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CASE STUDIES -->
+<section id="cases">
+  <p class="section-label">// pm case studies</p>
+  <h2>Problems I've owned</h2>
+  <p class="section-intro">Real work, real numbers. Every metric here is from delivery I was directly part of.</p>
+
+  <div class="case-list">
+
+    <!-- AUTOMATION -->
+    <div class="case-card">
+      <div>
+        <span class="case-tag">IAM Process Automation · 2025</span>
+        <h3>Eliminating 3,963 Hours of Manual IAM Work Annually</h3>
+        <p>Led automation of 9 IAM sub-processes including ETL/MLAD access provisioning, Scoping, Centrify Unix/Group Maintenance, RSA Token Management, and Drive Mapping. Wait time per access request dropped from 24 hours to 15 minutes across ~1,000 requests/year. The work required mapping legacy manual workflows, building the product case for automation investment, and driving delivery across platform and ops teams.</p>
+        <div class="tag-row" style="margin-top:16px">
+          <span class="tag">Process Automation</span><span class="tag">Centrify</span><span class="tag">RSA</span><span class="tag">Provisioning</span><span class="tag">IGA</span>
+        </div>
+      </div>
+      <div class="case-meta">
+        <span class="case-impact">3,963</span>
+        <span class="case-impact-label">Manhours Saved / Year</span>
+        <span class="case-impact" style="margin-top:12px;">24h→15m</span>
+        <span class="case-impact-label">Wait Time / Request</span>
+      </div>
+    </div>
+
+    <!-- TRANSFORMATION -->
+    <div class="case-card">
+      <div>
+        <span class="case-tag">Enterprise Transformation · 5-Year Programme</span>
+        <h3>Legacy IAM Platform to In-House Development</h3>
+        <p>Part of the core team that drove a 5-year enterprise IAM transformation — migrating off legacy vendor platforms to internally developed identity solutions. The programme spanned access governance, provisioning, and authentication layers across a large enterprise. Involved long-horizon roadmap ownership, decommissioning planning, stakeholder alignment across security, engineering, and compliance, and managing the inherent risk of cutover at enterprise scale.</p>
+        <div class="tag-row" style="margin-top:16px">
+          <span class="tag">Transformation</span><span class="tag">Legacy Migration</span><span class="tag">In-house Dev</span><span class="tag">Programme</span>
+        </div>
+      </div>
+      <div class="case-meta">
+        <span class="case-impact">5 yrs</span>
+        <span class="case-impact-label">Programme Duration</span>
+        <span class="case-impact" style="margin-top:12px;">Enterprise</span>
+        <span class="case-impact-label">Scale</span>
+      </div>
+    </div>
+
+    <!-- NHI -->
+    <div class="case-card">
+      <div>
+        <span class="case-tag">NHI Governance · Target India · In Progress</span>
+        <h3>NUA Finding &amp; Governance Platform</h3>
+        <p>Owning product for a platform to discover, classify, and govern Non-Human Accounts across Target's enterprise environment. Defined scoping automation to reduce manual classification effort, built OKR alignment with VP-level stakeholders, and driving engineering delivery across a cross-functional pod. Platform onboarded Q2 2026 — active development ongoing.</p>
+        <div class="tag-row" style="margin-top:16px">
+          <span class="tag">NHI</span><span class="tag">SailPoint</span><span class="tag">Platform PM</span><span class="tag">Automation</span>
+        </div>
+        <div class="wip-badge" style="margin-top:14px;"><span class="wip-dot"></span> Actively In Flight</div>
+      </div>
+      <div class="case-meta">
+        <span class="case-impact">Q2 2026</span>
+        <span class="case-impact-label">Onboarded</span>
+      </div>
+    </div>
+
+    <!-- AGENTGATE -->
+    <div class="case-card">
+      <div>
+        <span class="case-tag">Hackathon · AgentGate</span>
+        <h3>JIT Access Governance for AI Agents</h3>
+        <p>Conceived and prototyped AgentGate — a just-in-time access governance layer for AI agents in enterprise environments. Addressed the gap where AI agents acquire persistent, over-privileged access with no lifecycle controls. Built working Slack simulation demo to validate the governance workflow end-to-end.</p>
+        <div class="tag-row" style="margin-top:16px">
+          <span class="tag">AI Agents</span><span class="tag">JIT</span><span class="tag">NHI</span><span class="tag">Prototype</span>
+        </div>
+      </div>
+      <div class="case-meta">
+        <span class="case-impact">0→1</span>
+        <span class="case-impact-label">Concept to Demo</span>
+      </div>
+    </div>
+
+    <!-- ENTITLEMENT RISK -->
+    <div class="case-card">
+      <div>
+        <span class="case-tag">Internal Tool · Entitlement Risk API</span>
+        <h3>AI-Powered Entitlement Risk Scorer</h3>
+        <p>Built a working Entitlement Risk API prototype using LLM reasoning to score access entitlements by risk level. Demonstrates how AI can augment IGA certification campaigns by surfacing high-risk entitlements before human reviewers spend cycles on low-risk noise — reducing certification fatigue at scale.</p>
+        <div class="tag-row" style="margin-top:16px">
+          <span class="tag">LLM</span><span class="tag">IGA</span><span class="tag">Risk Scoring</span><span class="tag">API</span>
+        </div>
+      </div>
+      <div class="case-meta">
+        <span class="case-impact">API</span>
+        <span class="case-impact-label">Working Prototype</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CAREER -->
+<section id="career">
+  <p class="section-label">// career story</p>
+  <h2>19 years. Earned, not claimed.</h2>
+  <p class="section-intro">Quality assurance → programme delivery → identity transformation → product. Each phase built the one after it.</p>
+
+  <div class="timeline">
+
+    <div class="tl-item">
+      <p class="tl-date">OCT 2023 – PRESENT</p>
+      <p class="tl-role">Product Manager — Identity Solutions</p>
+      <p class="tl-company">Target India Pvt. Ltd. · Bengaluru</p>
+      <p class="tl-desc">Leading IAM strategy and automation for identity lifecycle management at enterprise scale. Owning NHI/NUA Governance, Scoping Automation, RBAC automation, and adaptive authentication. Driving OKRs, roadmaps, and cross-functional delivery. Building AI-native tooling to demonstrate what modern IAM PM looks like.</p>
+    </div>
+
+    <div class="tl-item">
+      <p class="tl-date">DEC 2020 – OCT 2023</p>
+      <p class="tl-role">Programme Manager / Proxy Product Owner — Identity Solutions</p>
+      <p class="tl-company">Target India Pvt. Ltd. · Bengaluru</p>
+      <p class="tl-desc">Owned IAM automation projects including API-based authentication workflows and self-service tools — cutting access request processing times by 40%. Led automated provisioning pipelines reducing errors by 30%. Competitive analysis and market research to align IAM solutions with business needs.</p>
+    </div>
+
+    <div class="tl-item">
+      <p class="tl-date">MAR 2017 – DEC 2020</p>
+      <p class="tl-role">Lead Scrum Master / Programme Manager</p>
+      <p class="tl-company">Target India Pvt. Ltd. · Bengaluru</p>
+      <p class="tl-desc">Directed Scrum of Scrums for large-scale IAM programmes. Facilitated deployment of automated identity lifecycle workflows, improving team throughput by 35%. Mentored teams in Agile practices while integrating automation tooling to accelerate IAM feature delivery.</p>
+    </div>
+
+    <div class="tl-item">
+      <p class="tl-date">APR 2016 – MAR 2017</p>
+      <p class="tl-role">Manager, Programme Management</p>
+      <p class="tl-company">Sapient Nitro · Bengaluru</p>
+      <p class="tl-desc">Spearheaded Agile-driven development projects and enterprise platform migrations. Managed programme portfolios ensuring resource allocation and delivery compliance across distributed teams.</p>
+    </div>
+
+    <div class="tl-item">
+      <p class="tl-date">JAN 2015 – MAR 2016</p>
+      <p class="tl-role">Delivery Assurance Lead, Agile Practice</p>
+      <p class="tl-company">Trianz Holdings · Bengaluru</p>
+      <p class="tl-desc">Directed Agile transformations for enterprise projects. Managed quality assurance processes aligned to ISO/CMMI standards. Implemented streamlined workflows for software testing and validation.</p>
+    </div>
+
+    <div class="tl-item">
+      <p class="tl-date">SEP 2012 – JAN 2015</p>
+      <p class="tl-role">Lead Validation Engineer</p>
+      <p class="tl-company">Parexel International · Bengaluru</p>
+      <p class="tl-desc">Designed automation frameworks for SaaS platform validation, reducing manual testing effort by 50%. Ensured 21 CFR Part 11 compliance for healthcare software. This is where the instinct for automation at scale was built — it shows up directly in how I approach IAM process automation today.</p>
+    </div>
+
+    <div class="tl-item">
+      <p class="tl-date">MAY 2011 – SEP 2012</p>
+      <p class="tl-role">Automation Test Lead</p>
+      <p class="tl-company">AppLabs · Hyderabad</p>
+      <p class="tl-desc">Pioneered automation of WebFOCUS reporting solutions. Designed reusable automation frameworks, led onsite-offshore knowledge sharing, and mentored junior engineers on testing methodologies and quality engineering practices.</p>
+    </div>
+
+    <div class="tl-item">
+      <p class="tl-date">NOV 2008 – MAY 2011</p>
+      <p class="tl-role">Test Lead</p>
+      <p class="tl-company">ValueMomentum Software Services · Hyderabad</p>
+      <p class="tl-desc">Led QA and testing efforts for enterprise software projects. Oversaw test strategy, execution, defect resolution, and release validation across multiple initiatives.</p>
+    </div>
+
+    <div class="tl-item">
+      <p class="tl-date">MAY 2006 – OCT 2008</p>
+      <p class="tl-role">QA Engineer</p>
+      <p class="tl-company">Kenexa Technologies · Hyderabad</p>
+      <p class="tl-desc">Quality assurance and testing for enterprise software applications. Contributed to process audits, metrics analysis, and continuous improvement initiatives.</p>
+    </div>
+
+    <div class="tl-item">
+      <p class="tl-date">JAN 2005 – APR 2006</p>
+      <p class="tl-role">Test Consultant</p>
+      <p class="tl-company">Private Consulting Firm · Hyderabad</p>
+      <p class="tl-desc">Early-career consulting in software testing and quality assurance. Requirements validation, defect management, and product quality support across enterprise software delivery.</p>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-wrap">
+    <p class="section-label" style="text-align:center">// let's connect</p>
+    <h2>Open to the right conversation</h2>
+    <p>If you're building identity or security products and need a PM who already speaks the domain — I'd like to hear about it.</p>
+    <div class="contact-links">
+      <a href="https://www.linkedin.com/in/haritha-reddy-chavva" target="_blank" class="btn btn-primary">LinkedIn</a>
+      <a href="mailto:harithareddy.c@gmail.com" class="btn btn-ghost">Email Me</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>haritha.pm · identity &amp; security product</span>
+  <span>bengaluru, india</span>
+</footer>
+
+<script>
+  const canvas = document.getElementById('graph');
+  const ctx = canvas.getContext('2d');
+  function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  const nodes = Array.from({length:28}, () => ({
+    x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight,
+    vx:(Math.random()-.5)*.35, vy:(Math.random()-.5)*.35,
+    r:Math.random()*2.5+1.5, pulse:Math.random()*Math.PI*2
+  }));
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    nodes.forEach(n => { n.x+=n.vx; n.y+=n.vy; n.pulse+=.012;
+      if(n.x<0||n.x>canvas.width) n.vx*=-1;
+      if(n.y<0||n.y>canvas.height) n.vy*=-1;
+    });
+    for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++) {
+      const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<180){ ctx.beginPath(); ctx.moveTo(nodes[i].x,nodes[i].y); ctx.lineTo(nodes[j].x,nodes[j].y);
+        ctx.strokeStyle=`rgba(59,130,246,${(1-d/180)*.22})`; ctx.lineWidth=.8; ctx.stroke(); }
+    }
+    nodes.forEach(n => { const p=.85+Math.sin(n.pulse)*.15;
+      ctx.beginPath(); ctx.arc(n.x,n.y,n.r*p,0,Math.PI*2);
+      ctx.fillStyle='rgba(6,182,212,0.55)'; ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+</script>
+</body>
+</html>
